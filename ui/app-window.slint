@@ -37,28 +37,28 @@ component MyDisplay inherits Window {
   callback entry_edited <=> ti.edited;       // Function binding
   callback entry_accepted <=> ti.accepted;   // Function binding
   
-	mrec := Rectangle {
+    mrec := Rectangle {
     min-width: 103px;
     max-width: 103px;
     height: 57px;
     background: black;
     border-radius: 3px;
   
-		Image {
+    Image {
       source: img_cent;
       x: 3px;
       y: 3px;
       width: 30px;
     }
   
-		Image {
+    Image {
       source: img_diz;
       x: 36px;
       y: 3px;
       width: 30px;
     }
   
-		Image {
+    Image {
       source: img_unit;
       x: 69px;
       y: 3px;
@@ -81,20 +81,20 @@ component MyDisplay inherits Window {
         color: #01ad01;
         text: "754";
         font-size: 22px;
-				input-type: number;
+	input-type: number;
         edited => {
-				  // Associated code is line 162, allowed by "callback entry_edited <=> ti.edited;" above
-				}
+	  // Associated code is line 162, allowed by "callback entry_edited <=> ti.edited;" above
+	}
         accepted => {
           displayTouch.enabled = true; // re-enable displayTouch after [ENTER] pressed
-					inputRect.visible = false; // Hide text Input - Part of code is line 176, due to callback binding
+	  inputRect.visible = false; // Hide text Input - Part of code is line 176, due to callback binding
         }
       }
     }
 
     displayTouch := TouchArea { // Used to get the possibility to show/hide textInput
-		}
-	}
+    }
+  }
 }
 
 
@@ -135,62 +135,62 @@ export component AppWindow inherits Window {
   images := ImgData { }
 
   Rectangle {
-		background: @linear-gradient(0deg, #060a06 0%, #161f16 50%, #060a06 100%);
+    background: @linear-gradient(0deg, #060a06 0%, #161f16 50%, #060a06 100%);
     border-radius: 10px;
     
-		VerticalLayout {
+    VerticalLayout {
       alignment: start; // Allow to resize window vertically - All children elements are placed from vertical start (top)
-  		padding: 20px;
+      padding: 20px;
 
       HorizontalLayout {
         alignment: start; // Allow to resize window horizontally - All children elements are placed from horizontal start (left)
-   		  spacing: 7px;
+        spacing: 7px;
 
         decButton := MyButton {
           text: "-";
           enabled: disp.touchEnabled;  // Disabled button if textInput is shown
-	  			click_color: #8486ff;
+          click_color: #8486ff;
           clicked => {
             request_decrease_value(); // Decrease counter in main.rs code
-				  }
+          }
         }
 
         disp := MyDisplay {
           property <int> cent: !editing ? counter / 100 : prev_cent; // We should not change images
-  				property <int> diz: !editing ? (counter - 100 * cent) / 10 : prev_diz; // vs counter when 
-	  			property <int> unit: !editing ? counter - 100 * cent - 10 * diz : prev_unit; // editing mode
-		  		img_cent: images.imgs[cent];
+          property <int> diz: !editing ? (counter - 100 * cent) / 10 : prev_diz; // vs counter when 
+          property <int> unit: !editing ? counter - 100 * cent - 10 * diz : prev_unit; // editing mode
+          img_cent: images.imgs[cent];
           img_diz: images.imgs[diz];
           img_unit: images.imgs[unit];
           clicked => { // Will show textInput for editing when clicked		
-						prev_cent = cent;
+	    prev_cent = cent;
             prev_diz = diz;
             prev_unit = unit;
             editing = true;
             self.editedValue = counter_as_string;
             self.showEdit = true; // Show textInput for editing (see binding in MyDisplay declaration)
-			  		self.touchEnabled = false; // Disabled displayTouch (used to show textInput)
-  				}
+            self.touchEnabled = false; // Disabled displayTouch (used to show textInput)
+          }
           entry_edited => { // Will update textInput after filtering all characters that are not numbers
-						counter_as_string = disp.editedValue; // Get input value
-			  		check_input_value(); // Then check it
+            counter_as_string = disp.editedValue; // Get input value
+            check_input_value(); // Then check it
             self.editedValue = counter_as_string; // And finally update textInput
-	  			}
+          }
           entry_accepted => { // Update main 7seg Display when press [ENTER]
-						validate_input_value(); // Check for textInput validation
+            validate_input_value(); // Check for textInput validation
             self.showEdit = false; // Hide textInput
-			  		self.touchEnabled = true; // Enabled displayTouch so it's possible to show textInput later
-						editing = false;
+            self.touchEnabled = true; // Enabled displayTouch so it's possible to show textInput later
+            editing = false;
           }
         }
 
         incButton := MyButton {
           text: "+";
           enabled: disp.touchEnabled; // Disabled button if textInput is shown
-			  	click_color: #fc8485;
+          click_color: #fc8485;
           clicked => {
             request_increase_value(); // Increase counter in main.rs code
-				  }
+          }
         }
       }
     }
