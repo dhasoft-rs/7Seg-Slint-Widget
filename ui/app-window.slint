@@ -1,191 +1,197 @@
 
+// Custom buttons
+//
 component MyButton inherits Rectangle {
   in property text <=> txt.text;
-	in property enabled <=> touch.enabled;
-	in property <color> click_color: #ddd;
-	in-out property <bool> is_clicked: touch.pressed ? true : false;
+  in property enabled <=> touch.enabled;
+  in property <color> click_color: #ddd;
+  in-out property <bool> is_clicked: touch.pressed ? true : false;
   callback clicked <=> touch.clicked;
   border-radius: root.height / 8;
   border-width: 1px;
   border-color: touch.pressed ? click_color : touch.has-hover ? #eeeeee : #444444;
-  background: touch.pressed ? @linear-gradient(0deg, #222222 0%, #555555 50%, #222222 100%) : touch.has-hover ? @linear-gradient(0deg, #222222 0%, #555555 50%, #222222 100%): @linear-gradient(0deg, #111111 0%, #444444 50%, #111111 100%);
-	height: 50px;
-	width: 50px;
+  background: touch.pressed ? @linear-gradient(0deg, #222222 0%, #555555 50%, #222222 100%) : touch.has-hover ? @linear-gradient(0deg, #222222 0%, #555555 50%, #222222 100%) : @linear-gradient(0deg, #111111 0%, #444444 50%, #111111 100%);
+  height: 50px;
+  width: 50px;
   txt := Text {
-    x: (parent.width - self.width)/2;
-    y: (parent.height - self.height)/2;
+    x: (parent.width - self.width) / 2;
+    y: (parent.height - self.height) / 2;
     color: touch.pressed ? click_color : touch.has-hover ? #eee : #ddd;
-  	font-size: 22px;
-	  font-weight: 400;
+    font-size: 22px;
+    font-weight: 400;
   }
   touch := TouchArea { }
 }
 
-component MyDisplay inherits Window{
-	in property <image> img_cent;
-	in property <image> img_diz;
-	in property <image> img_unit;
-	in-out property showEdit <=> inputRect.visible;
-	in-out property touchEnabled <=> displayTouch.enabled;
-	in-out property editedValue <=> ti.text;
-	callback clicked <=> displayTouch.clicked;
-	callback entry_edited <=> ti.edited;
-	callback entry_accepted <=> ti.accepted;
-	out property  checkfocus <=> ti.has-focus;
+
+// Custom 7 segments display, also contains textInput for value edition
+//
+component MyDisplay inherits Window {
+  in property <image> img_cent;
+  in property <image> img_diz;
+  in property <image> img_unit;
+  in-out property showEdit <=> inputRect.visible;
+  in-out property touchEnabled <=> displayTouch.enabled;
+  in-out property editedValue <=> ti.text;
+  callback clicked <=> displayTouch.clicked; // Function binding, code of displayTouch.clicked is in the 'clicked'
+  callback entry_edited <=> ti.edited;       // Function binding
+  callback entry_accepted <=> ti.accepted;   // Function binding
+  
 	mrec := Rectangle {
-	  min-width: 103px;
-		max-width: 103px;
-		height: 57px;
-		background: black;
-		border-radius: 3px;
-		Image {							
-			source: img_cent;
-			x: 3px;
-			y: 3px;
-			width: 30px;
-		}
-		Image {							
-			source: img_diz;
-			x: 36px;
-			y: 3px;
-			width: 30px;
-		}
-		Image {							
-			source: img_unit;
-			x: 69px;
-			y: 3px;
-			width: 30px;
-		}
-		inputRect := Rectangle {
-  		x: 3px;
-   		y: 16px;
-  		width: 96px;
-			height: 26px;
-			background: black;
-			border-color: #777;
-			border-radius: 2px;
-			border-width: 1px;
-			visible: false;
-  		ti := TextInput {
-				horizontal-alignment: center;
-				vertical-alignment: center;
- 				color: #01ad01;
- 				text: "754";
-				font-size: 22px;
-			//	font-italic: true;
-			//	font-weight: 400;
+    min-width: 103px;
+    max-width: 103px;
+    height: 57px;
+    background: black;
+    border-radius: 3px;
+  
+		Image {
+      source: img_cent;
+      x: 3px;
+      y: 3px;
+      width: 30px;
+    }
+  
+		Image {
+      source: img_diz;
+      x: 36px;
+      y: 3px;
+      width: 30px;
+    }
+  
+		Image {
+      source: img_unit;
+      x: 69px;
+      y: 3px;
+      width: 30px;
+    }
+
+    inputRect := Rectangle {
+      x: 3px;
+      y: 16px;
+      width: 96px;
+      height: 26px;
+      background: black;
+      border-color: #777;
+      border-radius: 2px;
+      border-width: 1px;
+      visible: false;
+      ti := TextInput { // ti is the textInput (this textInput is named, so we can access it elsewhere)
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        color: #01ad01;
+        text: "754";
+        font-size: 22px;
 				input-type: number;
-				
-				edited => {
-				// Appel de check_input_value() pour vérification de la valeur entrée 			
+        edited => {
+				  // Associated code is line 162, allowed by "callback entry_edited <=> ti.edited;" above
 				}
-				accepted => { 
-					displayTouch.enabled = true; // On revalide le TouchArea displayTouch après validation de l'input
-					inputRect.visible = false;
-				}
-		  }
+        accepted => {
+          displayTouch.enabled = true; // re-enable displayTouch after [ENTER] pressed
+					inputRect.visible = false; // Hide text Input - Part of code is line 176, due to callback binding
+        }
+      }
+    }
+
+    displayTouch := TouchArea { // Used to get the possibility to show/hide textInput
 		}
-		displayTouch := TouchArea {}// TouchArea qui permet d'afficher le TextInput
-	}						
+	}
 }
 
+
+// Images array, containing 7 segments pictures from 0 to 9
+//
 component ImgData {
-	out property <[image]> imgs: [
-	@image-url("../assets/img/7segGreen0.png"),
-	@image-url("../assets/img/7segGreen1.png"),
-	@image-url("../assets/img/7segGreen2.png"),
-	@image-url("../assets/img/7segGreen3.png"),
-	@image-url("../assets/img/7segGreen4.png"),
-	@image-url("../assets/img/7segGreen5.png"),
-	@image-url("../assets/img/7segGreen6.png"),
-	@image-url("../assets/img/7segGreen7.png"),
-	@image-url("../assets/img/7segGreen8.png"),
-  @image-url("../assets/img/7segGreen9.png")];
+  out property <[image]> imgs: [
+    @image-url("../assets/img/7segGreen0.png"),
+    @image-url("../assets/img/7segGreen1.png"),
+    @image-url("../assets/img/7segGreen2.png"),
+    @image-url("../assets/img/7segGreen3.png"),
+    @image-url("../assets/img/7segGreen4.png"),
+    @image-url("../assets/img/7segGreen5.png"),
+    @image-url("../assets/img/7segGreen6.png"),
+    @image-url("../assets/img/7segGreen7.png"),
+    @image-url("../assets/img/7segGreen8.png"),
+    @image-url("../assets/img/7segGreen9.png")
+  ];
 }
 
+
+// Main window application
+//
 export component AppWindow inherits Window {
-	title: "7Seg Widgets";
-	background: #111;
-	in-out property <int> counter: 489;
-	in-out property <string> counter_as_string: "489";
-	property <bool> editing: false;
-	property <int> prev_cent: 0;
-	property <int> prev_diz: 0;
-	property <int> prev_unit: 0;
-	callback request_increase_value();
+  title: "7Seg Widgets";
+  background: #111;
+  in-out property <int> counter: 489;
+  in-out property <string> counter_as_string: "489";
+  property <bool> editing: false;
+  property <int> prev_cent: 0;
+  property <int> prev_diz: 0;
+  property <int> prev_unit: 0;
+  callback request_increase_value();
   callback request_decrease_value();
   callback check_input_value();
   callback validate_input_value();
-	images := ImgData {
-	}
+  images := ImgData { }
+
   Rectangle {
-	
-	/*my-key-handler := FocusScope {
-        key-pressed(event) => {
-            debug(event.text);
-            if (event.modifiers.control) {
-              //  debug("control was pressed during this event");
-            }
-            if (event.text == Key.Escape) {
-                debug("Esc key was pressed");
-            }
-            accept
-        }
-    }*/
-		
 		background: @linear-gradient(0deg, #060a06 0%, #161f16 50%, #060a06 100%);
-		border-radius: 10px;
+    border-radius: 10px;
+    
 		VerticalLayout {
-			alignment: start; // Va permettre d'agrandir la fenêtre verticalement (en plaçant les élément 'au début'<=start)
+      alignment: start; // Allow to resize window vertically - All children elements are placed from vertical start (top)
   		padding: 20px;
-			HorizontalLayout {
-		  	alignment: start; // Va permettre d'agrandir la fenêtre horizontalement (en plaçant les élément 'au début'<=start)
+
+      HorizontalLayout {
+        alignment: start; // Allow to resize window horizontally - All children elements are placed from horizontal start (left)
    		  spacing: 7px;
-        decButton := MyButton { 
-	   	    text: "-"; 
-				  enabled: disp.touchEnabled; // Dévalidation du bouton si on affiche textInput
+
+        decButton := MyButton {
+          text: "-";
+          enabled: disp.touchEnabled;  // Disabled button if textInput is shown
 	  			click_color: #8486ff;
-		  		clicked => {
-			  		request_decrease_value(); // On décrémente counter dans main.rs
+          clicked => {
+            request_decrease_value(); // Decrease counter in main.rs code
 				  }
-	 	    }
-			  disp := MyDisplay {
-				  property <int> cent: !editing ? counter/100 : prev_cent; // On ne change pas les images si on
-  				property <int> diz: !editing ? (counter - 100*cent)/10 : prev_diz; // est en mode 
-	  			property <int> unit: !editing ? counter - 100*cent - 10*diz : prev_unit; // edition
+        }
+
+        disp := MyDisplay {
+          property <int> cent: !editing ? counter / 100 : prev_cent; // We should not change images
+  				property <int> diz: !editing ? (counter - 100 * cent) / 10 : prev_diz; // vs counter when 
+	  			property <int> unit: !editing ? counter - 100 * cent - 10 * diz : prev_unit; // editing mode
 		  		img_cent: images.imgs[cent];
-			  	img_diz: images.imgs[diz];
-  				img_unit: images.imgs[unit];
-	  			clicked => { // On affiche le TextInput						
+          img_diz: images.imgs[diz];
+          img_unit: images.imgs[unit];
+          clicked => { // Will show textInput for editing when clicked		
 						prev_cent = cent;
-						prev_diz = diz;
-						prev_unit = unit;
-						editing = true;
-		  			self.editedValue = counter_as_string;
-				  	self.showEdit = true; // On affiche le textInput qui permet de changer la valeur
-			  		self.touchEnabled = false; // On dévalide la zone de détection des 3 digits qui permet d'activer le textInput
+            prev_diz = diz;
+            prev_unit = unit;
+            editing = true;
+            self.editedValue = counter_as_string;
+            self.showEdit = true; // Show textInput for editing (see binding in MyDisplay declaration)
+			  		self.touchEnabled = false; // Disabled displayTouch (used to show textInput)
   				}
-	  			entry_edited => { // On met à jour le TextInput en filtrant les caractères interdits (autres que les nombres)
-						counter_as_string = disp.editedValue; // On récupère la valeur du input
-			  		check_input_value();
-  					self.editedValue = counter_as_string; // Et on la rafraichit après vérification
+          entry_edited => { // Will update textInput after filtering all characters that are not numbers
+						counter_as_string = disp.editedValue; // Get input value
+			  		check_input_value(); // Then check it
+            self.editedValue = counter_as_string; // And finally update textInput
 	  			}
-					entry_accepted => { // On met à jour l'affichage Digit en fonction du TextInput
-						validate_input_value();
-				  	self.showEdit = false; // On cache le textInput qui permet de changer la valeur
-			  		self.touchEnabled = true; // On revalide la zone de détection des 3 digits qui permet d'activer le textInput
+          entry_accepted => { // Update main 7seg Display when press [ENTER]
+						validate_input_value(); // Check for textInput validation
+            self.showEdit = false; // Hide textInput
+			  		self.touchEnabled = true; // Enabled displayTouch so it's possible to show textInput later
 						editing = false;
-					}
-		  	}
-        incButton := MyButton { 
-	  	    text: "+"; 
-		  		enabled: disp.touchEnabled; // Dévalidation du bouton si on affiche textInput
+          }
+        }
+
+        incButton := MyButton {
+          text: "+";
+          enabled: disp.touchEnabled; // Disabled button if textInput is shown
 			  	click_color: #fc8485;
-  				clicked => {
-	  				request_increase_value(); // On incrémente counter dans main.rs
+          clicked => {
+            request_increase_value(); // Increase counter in main.rs code
 				  }
-		    }
-		  }
-		}
+        }
+      }
+    }
   }
 }
