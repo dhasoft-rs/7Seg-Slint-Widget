@@ -4,16 +4,35 @@
 
 Ce projet vise à la création d'un Custom Widget "afficheur 7 segments". L'ensemble des éléments qui vont constituer l'IHM sont définis dans la fichier app-window.slint.
 
+<p align="center">
+  <img width="250" src="/7SegWidget.png">
+  &nbsp;
+  <img width="250" src="/7SegEdition.png">
+</p>
 
+L'application contient 2 boutons (-) et (+), l'afficheur 3x7segments, ainsi qu'un TextInput permettant de définir directement la valeur à afficher.
+
+<p>&nbsp;</p>
+
+# Principe
+
+L'afficheur va afficher la valeur d"un compteur interne, entre 0 et 999.Il est constitué de 3 images (centaines, dizaines et unités) dont la source va changer selon la valeur du compteur. La valeur du compteur (qui au départ vaut 489) peut être soit modifiée avec les boutons, soit directement être éditée en cliquant sur l'afficheur, puis validée en appuyant sur _[ENTRÉE]_.
+
+<p>&nbsp;</p>
+
+# Constitution du fichier app-window.slint
+
+- Les boutons sont définis par le composant **MyButton**.
+- L'afficheur ainsi que le TextInput sont définis dans le composant **MyDisplay**
+- Le composant **ImgData** contient les images des 10 chiffres 
+- Le composant principal **MainApp** va placer le bouton (-), l'afficheur et le bouton (+) dans une layout horizontale.
 ...to be continued...
 
 
 # Le projet
 
 Voici un 1er exemple de code pour réaliser une IHM toute simple avec Slint. Il est issu du template que Slint fournit pour démarrer 'en douceur'. Cette application contient un label qui affiche la valeur d'un compteur, et 2 boutons permettant d'incrémenter ou de décrémenter ce compteur.
-<p align="center">
-  <img width="300" src="/01_Introducing_Slint.png">
-</p>
+
 
 
 
