@@ -173,11 +173,11 @@ export component AppWindow inherits Window {
           }
           entry_edited => { // Will update textInput after filtering all characters that are not numbers
             counter_as_string = disp.editedValue; // Get input value
-            check_input_value(); // Then check it
+            check_input_value(); // Then check input value in main.rs code
             self.editedValue = counter_as_string; // And finally update textInput
           }
           entry_accepted => { // Update main 7seg Display when press [ENTER]
-            validate_input_value(); // Check for textInput validation
+            validate_input_value(); // Check for textInput validation in main.rs code
             self.showEdit = false; // Hide textInput
             self.touchEnabled = true; // Enabled displayTouch so it's possible to show textInput later
             editing = false;
