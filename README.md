@@ -31,7 +31,7 @@ L'afficheur va afficher la valeur d"un compteur interne, entre 0 et 999. Il est 
 
 # Fonctionnement
 
-Le déroulement global du programme est visible dans la partie HorizontalLayout du fichier **app-window.slint**.
+Le déroulement global du programme est visible dans la partie HorizontalLayout du composant **AppWindow**.
 - on y trouve d'abord le bouton  'decButton', qui va décrémenter le compteur sur son évènement _'clicked'_.
 - vient ensuite, le composant 'disp' qui contient l'afficheur et le TextInput permettant de modifier la valeur du compteur. On y trouve la mise à jour des images à utiliser en fonction de la valeur du compteur, la gestion de l'affichage du TextInput sur l'évènement _'clicked'_, la gestion du filtrage des caractères entrés sur l'évènement _'entry_edited'_, et la gestion de la validation de la valeur entrée sur l'évènement _'entry_accepted'_. 
 - on trouve enfin le bouton  'incButton', qui va incrémenter le compteur sur son évènement _'clicked'_.
