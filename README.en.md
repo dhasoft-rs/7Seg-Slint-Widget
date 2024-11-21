@@ -1,6 +1,6 @@
  # TFRT 02 - 7Seg-Slint-Widget
 
-The aim of this project is to create a ‘7-segment display’ Custom Widget. All the elements that will make up the GUI are defined in the app-window.slint file.
+The goal of this project is to create a ‘7-segment display’ Custom Widget. All the elements that will make up the GUI are defined in the app-window.slint file.
 
 <p align="center">
   <img width="250" src="/7SegWidget.png">
